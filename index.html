@@ -220,48 +220,40 @@
 </script>
 <script>
   (function () {
-    var c = document.getElementById('sea');
-    var gl = c.getContext('webgl', { antialias: false, alpha: false, powerPreference: 'low-power', preserveDrawingBuffer: true });
-    if (!gl) { c.style.display = 'none'; return; }
-    var vs = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
-    var fs = [
-      'precision mediump float;uniform vec2 r;uniform float t;',
-      'float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}',
-      'float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);',
-      'return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}',
-      'float fb(vec2 p){float v=0.,a=.5;mat2 m=mat2(1.6,1.2,-1.2,1.6);for(int i=0;i<5;i++){v+=a*n(p);p=m*p;a*=.5;}return v;}',
-      'void main(){',
-      ' vec2 uv=gl_FragCoord.xy/r.y; vec2 q=uv*2.6+vec2(t*.035,t*.012);',
-      ' vec2 w=vec2(fb(q+vec2(0.,t*.04)),fb(q+vec2(5.2,1.3)-t*.03));',
-      ' float f=fb(q+2.2*w+vec2(t*.06,0.));',
-      ' float sw=sin(uv.x*5.+uv.y*1.6-t*.7+f*4.)*.5+.5;',
-      ' float crest=smoothstep(.82,1.,sw)*smoothstep(.35,.75,f);',
-      ' float ca=pow(1.-abs(sin(f*14.+t*.3)),10.);',
-      ' vec3 deep=vec3(.015,.075,.12), mid=vec3(.035,.19,.27);',
-      ' vec3 col=mix(deep,mid,smoothstep(.2,.85,f));',
-      ' col+=vec3(.25,.55,.62)*ca*.18;',
-      ' col+=vec3(.75,.9,.95)*crest*.16;',
-      ' vec2 v=gl_FragCoord.xy/r; col*=.75+.35*v.y;',
-      ' gl_FragColor=vec4(col,1.);}'
-    ].join('\n');
-    function sh(type, src) { var o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return o; }
-    var pr = gl.createProgram();
-    gl.attachShader(pr, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, fs));
-    gl.linkProgram(pr);
-    if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) { c.style.display = 'none'; return; }
-    gl.useProgram(pr);
-    var b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
-    var loc = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-    var ur = gl.getUniformLocation(pr, 'r'), ut = gl.getUniformLocation(pr, 't');
-    var SCALE = Math.min(window.devicePixelRatio || 1, 1.5);
-    function size() {
-      c.width = Math.max(1, Math.round(innerWidth * SCALE)); c.height = Math.max(1, Math.round(innerHeight * SCALE));
-      gl.viewport(0, 0, c.width, c.height); gl.uniform2f(ur, c.width, c.height);
+    var c = document.getElementById('sea'), x = c.getContext('2d');
+    if (!x) { c.style.display = 'none'; return; }
+    var layers = [
+      { y: .38, amp: 10, len: 260, sp: 14, col: '#0f3a50' },
+      { y: .50, amp: 14, len: 220, sp: -20, col: '#0c3045' },
+      { y: .62, amp: 14, len: 210, sp: 28, col: '#09263a' },
+      { y: .76, amp: 14, len: 200, sp: -36, col: '#061c2c' },
+      { y: .90, amp: 12, len: 240, sp: 46, col: '#04131f' }
+    ];
+    function draw(time) {
+      var w = innerWidth, h = innerHeight, d = Math.min(devicePixelRatio || 1, 2);
+      if (c.width !== Math.round(w * d) || c.height !== Math.round(h * d)) { c.width = Math.round(w * d); c.height = Math.round(h * d); }
+      x.setTransform(d, 0, 0, d, 0, 0);
+      var sky = x.createLinearGradient(0, 0, 0, h); sky.addColorStop(0, '#0b2f44'); sky.addColorStop(1, '#071a25');
+      x.fillStyle = sky; x.fillRect(0, 0, w, h);
+      var k = Math.min(h / 300, 2.2), ls = Math.max(w / 520, 1);
+      layers.forEach(function (L, i) {
+        var len = L.len * ls;
+        x.beginPath(); x.moveTo(0, h);
+        for (var px = 0; px <= w + 8; px += 8) {
+          var yy = L.y * h + Math.sin((px + time * L.sp * ls) / len * 6.283) * L.amp * k + Math.sin((px - time * L.sp * ls * .6) / (len * .47) * 6.283) * L.amp * .35 * k;
+          x.lineTo(px, yy);
+        }
+        x.lineTo(w, h); x.closePath(); x.fillStyle = L.col; x.fill();
+        x.strokeStyle = 'rgba(190, 225, 235, ' + (0.10 + i * 0.03) + ')'; x.lineWidth = 1.5; x.stroke();
+      });
     }
-    size(); addEventListener('resize', function () { size(); draw(); });
-    function draw() { gl.uniform1f(ut, 20.0); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); }
-    draw();
+    var still = matchMedia('(prefers-reduced-motion: reduce)').matches, t0 = performance.now(), last = 0;
+    function frame(now) {
+      if (now - last > 33) { last = now; draw(20 + (now - t0) / 1000); }
+      if (!still) requestAnimationFrame(frame);
+    }
+    addEventListener('resize', function () { if (still) draw(20); });
+    requestAnimationFrame(frame);
   })();
 </script>
 </body>
