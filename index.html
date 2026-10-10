@@ -63,6 +63,18 @@
   .contact h2 { color: #fff; margin-bottom: 20px; }
   .contact p { margin: 0 0 22px; opacity: .9; max-width: 420px; }
   .contact .deco { position: absolute; right: -30px; top: -30px; width: 220px; height: 220px; opacity: .25; }
+  .msg { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 26px 24px; margin: 0 0 56px; }
+  .msg h3 { font-size: 1.2rem; margin: 0 0 14px; }
+  .msg textarea, .msg input[type=email] { width: 100%; background: var(--soft); color: var(--text); border: 1px solid var(--line);
+    border-radius: 12px; padding: 12px 14px; font: inherit; font-size: .95rem; }
+  .msg textarea { min-height: 96px; resize: vertical; }
+  .msg input[type=email] { margin-top: 10px; }
+  .msg textarea:focus, .msg input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .msg .row { display: flex; align-items: center; gap: 14px; margin-top: 12px; flex-wrap: wrap; }
+  .msg button { background: var(--accent); color: #1a120e; border: 0; border-radius: 999px; padding: 10px 22px; font: 500 .95rem "Inter", sans-serif; cursor: pointer; }
+  .msg button:disabled { opacity: .5; cursor: default; }
+  .msg .note { font-size: .85rem; color: var(--muted); }
+  .msg .hp { position: absolute; left: -9999px; }
   .links { display: flex; flex-wrap: wrap; gap: 10px; position: relative; }
   .links a { display: inline-flex; align-items: center; gap: 8px; color: #1f1d1a; background: #fff; text-decoration: none;
     border-radius: 999px; padding: 9px 18px; font-weight: 500; transition: transform .15s; }
@@ -93,7 +105,7 @@
     </div>
 
     <div class="side">
-      <div class="clock" id="clock" aria-live="off"><span id="ctime">--:--</span><span id="cdate">--/--/----</span></div>
+      <div class="clock" id="clock" aria-live="off"><span id="ctime">--:--:--</span><span id="cdate">--/--/----</span></div>
     <div class="frame">
       <svg class="blob" viewBox="0 0 200 220" aria-hidden="true">
         <path fill="var(--sun)" opacity=".55" d="M100 8c48 0 92 30 94 82 2 50-22 100-74 118-52 18-108-6-114-66C0 82 40 8 100 8z"/>
@@ -147,6 +159,19 @@
     </div>
   </section>
 
+  <section class="msg" aria-labelledby="msg-h">
+    <h3 id="msg-h">Bana bir not bırak</h3>
+    <form id="msgform">
+      <textarea name="mesaj" id="mesaj" maxlength="1000" required placeholder="Mesajın..."></textarea>
+      <input type="email" name="email" placeholder="E-postan (cevap istersen, isteğe bağlı)">
+      <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="row">
+        <button type="submit" id="msgbtn">Gönder</button>
+        <span class="note" id="msgnote" role="status"></span>
+      </div>
+    </form>
+  </section>
+
 </div>
 <script>
   (function () {
@@ -154,10 +179,47 @@
     function p(n) { return String(n).padStart(2, '0'); }
     function tick() {
       var n = new Date();
-      t.textContent = p(n.getHours()) + ':' + p(n.getMinutes());
+      t.textContent = p(n.getHours()) + ':' + p(n.getMinutes()) + ':' + p(n.getSeconds());
       d.textContent = p(n.getDate()) + '/' + p(n.getMonth() + 1) + '/' + n.getFullYear();
     }
     tick(); setInterval(tick, 1000);
+  })();
+</script>
+<script>
+  (function () {
+    var f = document.getElementById('msgform'), btn = document.getElementById('msgbtn'), note = document.getElementById('msgnote');
+    var KEY = 'msg-last', HOUR = 3600000;
+    function last() { try { return +localStorage.getItem(KEY) || 0; } catch (e) { return 0; } }
+    function wait() { return Math.max(0, last() + HOUR - Date.now()); }
+    function lock() {
+      var w = wait();
+      btn.disabled = w > 0;
+      if (w > 0) note.textContent = 'Mesajın ulaştı, teşekkürler. Yeni mesaj için ' + Math.ceil(w / 60000) + ' dk sonra tekrar dene.';
+    }
+    lock(); setInterval(lock, 30000);
+    f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (wait() > 0) return lock();
+      var data = new FormData(f);
+      if (data.get('_honey')) return;
+      btn.disabled = true; note.textContent = 'Gönderiliyor...';
+      fetch('https://formsubmit.co/ajax/erenkymz@gmail.com', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          _subject: 'erenkaymaz.com üzerinden yeni mesaj',
+          _template: 'box',
+          mesaj: data.get('mesaj'),
+          email: data.get('email') || '-'
+        })
+      }).then(function (r) { return r.json(); }).then(function (r) {
+        if (String(r.success) !== 'true') throw 0;
+        try { localStorage.setItem(KEY, String(Date.now())); } catch (e) {}
+        f.reset(); lock();
+      }).catch(function () {
+        btn.disabled = false; note.textContent = 'Gönderilemedi, birazdan tekrar dene.';
+      });
+    });
   })();
 </script>
 </body>
