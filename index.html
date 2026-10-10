@@ -11,11 +11,14 @@
 <style>
   :root {
     color-scheme: dark;
-    --bg: #000000; --text: #f2efe9; --muted: #9a958c; --accent: #f08a62; --accent2: #3f8a78; --sun: #f2b84b;
-    --line: #2a2926; --soft: #141413; --card: #111110;
+    --bg: #0b2433; --text: #eef3f4; --muted: #93aab3; --accent: #f08a62; --accent2: #3f8a78; --sun: #f2b84b;
+    --line: #1f4152; --soft: #0f2e40; --card: #0e2a3a; --contact: #c9583a;
   }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.7 "Inter", system-ui, sans-serif; overflow-x: hidden; }
+  @keyframes drift { from { background-position: 0 0, 0 0; } to { background-position: 120px 0, 0 0; } }
+  @media (prefers-reduced-motion: reduce) { body { animation: none; } }
+  body { margin: 0; background-color: var(--bg); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='40' viewBox='0 0 120 40'%3E%3Cpath d='M0 20 q15 -8 30 0 t30 0 t30 0 t30 0' fill='none' stroke='%237fb8cc' stroke-opacity='.14' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"), radial-gradient(ellipse at 50% 0%, #12384d 0%, transparent 70%);
+    background-size: 120px 40px, 100% 100%; background-attachment: fixed; animation: drift 14s linear infinite; color: var(--text); font: 17px/1.7 "Inter", system-ui, sans-serif; overflow-x: hidden; }
   .wrap { max-width: 920px; margin: 0 auto; padding: 0 20px; }
   h1, h2, h3 { font-family: "Fraunces", Georgia, serif; font-weight: 600; letter-spacing: -0.01em; }
 
@@ -59,7 +62,7 @@
   .now .ic svg { width: 24px; height: 24px; }
   .now b { display: block; font-weight: 500; font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
 
-  .contact { background: var(--accent2); color: #fff; border-radius: 28px; padding: 40px 32px; position: relative; overflow: hidden; margin: 20px 0 0; }
+  .contact { background: var(--contact); color: #fff; border-radius: 28px; padding: 40px 32px; position: relative; overflow: hidden; margin: 20px 0 0; }
   .contact h2 { color: #fff; margin-bottom: 20px; }
   .contact p { margin: 0 0 22px; opacity: .9; max-width: 420px; }
   .contact .deco { position: absolute; right: -30px; top: -30px; width: 220px; height: 220px; opacity: .25; }
