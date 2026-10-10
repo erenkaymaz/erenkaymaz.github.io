@@ -30,11 +30,11 @@
   .clock { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2; font-variant-numeric: tabular-nums; }
   .clock #ctime { font: 600 1.6rem "Fraunces", Georgia, serif; color: var(--text); }
   .clock #cdate { font-size: .85rem; color: var(--muted); letter-spacing: .06em; }
-  .frame { position: relative; aspect-ratio: 4 / 5; max-width: 180px; justify-self: center; width: 180px; }
+  .frame { position: relative; aspect-ratio: 1080 / 1075; max-width: 240px; justify-self: center; width: 240px; }
   .frame .blob { position: absolute; inset: -8% -10% -6% -8%; width: 118%; height: 114%; z-index: 0; }
   .frame .photo {
     position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover;
-    border-radius: 100px 100px 14px 14px; object-position: center 20%; background: var(--card); border: 4px solid var(--card);
+    border-radius: 14px; object-position: center; background: var(--card); border: 4px solid var(--card);
     box-shadow: 0 20px 40px -18px rgba(0,0,0,.35);
   }
   .frame .sticker {
@@ -88,7 +88,7 @@
     .hero { grid-template-columns: 1fr; gap: 36px; padding-top: 48px; }
     .side { order: -1; align-items: center; }
     .clock { align-items: center; }
-    .frame { max-width: 160px; width: 160px; }
+    .frame { max-width: 220px; width: 220px; }
     .facts { grid-template-columns: repeat(3, 1fr); gap: 10px; }
     .fact { padding: 10px; border-radius: 14px; }
     .fact svg { height: 64px; }
