@@ -213,11 +213,15 @@
           email: data.get('email') || '-'
         })
       }).then(function (r) { return r.json(); }).then(function (r) {
-        if (String(r.success) !== 'true') throw 0;
+        if (String(r.success) !== 'true') throw r;
         try { localStorage.setItem(KEY, String(Date.now())); } catch (e) {}
         f.reset(); lock();
-      }).catch(function () {
-        btn.disabled = false; note.textContent = 'Gönderilemedi, birazdan tekrar dene.';
+      }).catch(function (err) {
+        var m = err && err.message ? String(err.message) : '';
+        btn.disabled = false;
+        note.textContent = /activat/i.test(m)
+          ? 'Form henüz etkinleştirilmedi. Site sahibi onay e-postasını onaylayınca mesajlar ulaşacak.'
+          : 'Gönderilemedi, birazdan tekrar dene.' + (m ? ' (' + m + ')' : '');
       });
     });
   })();
