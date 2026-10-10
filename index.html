@@ -101,10 +101,16 @@
     .duo { grid-template-columns: minmax(0, 1fr); }
     .lead { padding-top: 0; }
   }
+  /* Language switch */
+  .lang { position: absolute; top: 16px; right: 20px; z-index: 5; display: flex; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 999px; background: rgba(14, 42, 58, .75); backdrop-filter: blur(6px); }
+  .lang button { font: 500 .8rem "Inter", system-ui, sans-serif; letter-spacing: .06em; color: var(--muted); background: none; border: 0; border-radius: 999px; padding: 5px 11px; cursor: pointer; }
+  .lang button:hover { color: var(--text); }
+  .lang button[aria-pressed="true"] { background: var(--accent); color: #0b2433; }
 </style>
 </head>
 <body>
 <canvas id="sea" aria-hidden="true"></canvas>
+<nav class="lang" aria-label="Dil / Language"><button type="button" data-lang="tr" aria-pressed="true">TR</button><button type="button" data-lang="en" aria-pressed="false">EN</button></nav>
 <div class="wrap">
 
   <header class="hero">
@@ -150,22 +156,22 @@
 
   <div class="duo">
     <div class="contact">
-      <h2>İletişim</h2>
+      <h2 data-i18n="contact">İletişim</h2>
       <div class="links">
-        <a href="mailto:erenkymz@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>E-posta</a>
+        <a href="mailto:erenkymz@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><span data-i18n="email">E-posta</span></a>
         <a href="https://www.linkedin.com/in/eren-kaymaz/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 10v7M8 7v.01M12 17v-4a2 2 0 0 1 4 0v4M12 10v7"/></svg>LinkedIn</a>
         <a href="https://www.instagram.com/erenkymz/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5v.01"/></svg>Instagram</a>
       </div>
     </div>
 
   <section class="msg" aria-labelledby="msg-h">
-    <h3 id="msg-h">Mesaj Gönder</h3>
+    <h3 id="msg-h" data-i18n="msgTitle">Mesaj Gönder</h3>
     <form id="msgform">
-      <textarea name="mesaj" id="mesaj" maxlength="1000" required placeholder="Mesajın..."></textarea>
-      <input type="email" name="email" placeholder="E-postan (cevap istersen, isteğe bağlı)">
+      <textarea name="mesaj" id="mesaj" maxlength="1000" required placeholder="Mesajın..." data-i18n-ph="msgPh"></textarea>
+      <input type="email" name="email" placeholder="E-postan (cevap istersen, isteğe bağlı)" data-i18n-ph="emailPh">
       <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
       <div class="row">
-        <button type="submit" id="msgbtn">Gönder</button>
+        <button type="submit" id="msgbtn" data-i18n="send">Gönder</button>
         <span class="note" id="msgnote" role="status"></span>
       </div>
     </form>
@@ -173,6 +179,34 @@
   </div>
 
 </div>
+<script>
+  (function () {
+    var D = {
+      tr: { contact: 'İletişim', email: 'E-posta', msgTitle: 'Mesaj Gönder', msgPh: 'Mesajın...', emailPh: 'E-postan (cevap istersen, isteğe bağlı)', send: 'Gönder',
+            sent: 'Mesajın ulaştı, teşekkürler.', sending: 'Gönderiliyor...', notActive: 'Form henüz etkinleştirilmedi. Site sahibi onay e-postasını onaylayınca mesajlar ulaşacak.', failed: 'Gönderilemedi, birazdan tekrar dene.',
+            desc: 'Selam, ben Eren. Kısaca kendimden bahsettiğim küçük bir sayfa.' },
+      en: { contact: 'Contact', email: 'Email', msgTitle: 'Send a Message', msgPh: 'Your message...', emailPh: 'Your email (if you want a reply, optional)', send: 'Send',
+            sent: 'Your message arrived, thank you.', sending: 'Sending...', notActive: 'The form is not activated yet. Messages will arrive once the site owner confirms it.', failed: 'Could not send, please try again shortly.',
+            desc: 'Hi, I am Eren. A small page about me.' }
+    };
+    var lang = 'tr';
+    try { lang = localStorage.getItem('lang') || ''; } catch (e) {}
+    if (!D[lang]) lang = /^tr/i.test(navigator.language || 'tr') ? 'tr' : 'en';
+    window.T = function (k) { return D[lang][k]; };
+    window.setLang = function (l) {
+      lang = D[l] ? l : 'tr';
+      try { localStorage.setItem('lang', lang); } catch (e) {}
+      document.documentElement.lang = lang;
+      document.querySelectorAll('[data-i18n]').forEach(function (el) { el.textContent = T(el.getAttribute('data-i18n')); });
+      document.querySelectorAll('[data-i18n-ph]').forEach(function (el) { el.placeholder = T(el.getAttribute('data-i18n-ph')); });
+      document.querySelectorAll('.lang button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-lang') === lang)); });
+      var m = document.querySelector('meta[name="description"]'); if (m) m.content = T('desc');
+      var note = document.getElementById('msgnote'); if (note && note.getAttribute('data-k')) note.textContent = T(note.getAttribute('data-k'));
+    };
+    document.querySelectorAll('.lang button').forEach(function (b) { b.addEventListener('click', function () { setLang(b.getAttribute('data-lang')); }); });
+    setLang(lang);
+  })();
+</script>
 <script>
   (function () {
     var t = document.getElementById('ctime'), d = document.getElementById('cdate');
@@ -189,12 +223,13 @@
   (function () {
     var f = document.getElementById('msgform'), btn = document.getElementById('msgbtn'), note = document.getElementById('msgnote');
     var KEY = 'msg-last', HOUR = 3600000;
+    function say(k) { note.setAttribute('data-k', k); note.textContent = T(k); }
     function last() { try { return +localStorage.getItem(KEY) || 0; } catch (e) { return 0; } }
     function wait() { return Math.max(0, last() + HOUR - Date.now()); }
     function lock() {
       var w = wait();
       btn.disabled = w > 0;
-      if (w > 0) note.textContent = 'Mesajın ulaştı, teşekkürler.';
+      if (w > 0) say('sent');
     }
     lock(); setInterval(lock, 30000);
     f.addEventListener('submit', function (e) {
@@ -202,7 +237,7 @@
       if (wait() > 0) return lock();
       var data = new FormData(f);
       if (data.get('_honey')) return;
-      btn.disabled = true; note.textContent = 'Gönderiliyor...';
+      btn.disabled = true; say('sending');
       fetch('https://formsubmit.co/ajax/erenkymz@gmail.com', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -219,9 +254,8 @@
       }).catch(function (err) {
         var m = err && err.message ? String(err.message) : '';
         btn.disabled = false;
-        note.textContent = /activat/i.test(m)
-          ? 'Form henüz etkinleştirilmedi. Site sahibi onay e-postasını onaylayınca mesajlar ulaşacak.'
-          : 'Gönderilemedi, birazdan tekrar dene.' + (m ? ' (' + m + ')' : '');
+        if (/activat/i.test(m)) say('notActive');
+        else { note.removeAttribute('data-k'); note.textContent = T('failed') + (m ? ' (' + m + ')' : ''); }
       });
     });
   })();
