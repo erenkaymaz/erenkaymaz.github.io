@@ -194,7 +194,7 @@
     function lock() {
       var w = wait();
       btn.disabled = w > 0;
-      if (w > 0) note.textContent = 'Mesajın ulaştı, teşekkürler. Yeni mesaj için ' + Math.ceil(w / 60000) + ' dk sonra tekrar dene.';
+      if (w > 0) note.textContent = 'Mesajın ulaştı, teşekkürler.';
     }
     lock(); setInterval(lock, 30000);
     f.addEventListener('submit', function (e) {
