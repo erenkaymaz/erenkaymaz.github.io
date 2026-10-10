@@ -15,10 +15,8 @@
     --line: #1f4152; --soft: #0f2e40; --card: #0e2a3a; --contact: #c9583a;
   }
   * { box-sizing: border-box; }
-  @keyframes drift { from { background-position: 0 0, 0 0; } to { background-position: 120px 0, 0 0; } }
-  @media (prefers-reduced-motion: reduce) { body { animation: none; } }
-  body { margin: 0; background-color: var(--bg); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='40' viewBox='0 0 120 40'%3E%3Cpath d='M0 20 q15 -8 30 0 t30 0 t30 0 t30 0' fill='none' stroke='%237fb8cc' stroke-opacity='.14' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"), radial-gradient(ellipse at 50% 0%, #12384d 0%, transparent 70%);
-    background-size: 120px 40px, 100% 100%; background-attachment: fixed; animation: drift 14s linear infinite; color: var(--text); font: 17px/1.7 "Inter", system-ui, sans-serif; overflow-x: hidden; }
+  body { margin: 0; background: radial-gradient(ellipse at 50% 0%, #12384d 0%, var(--bg) 70%) fixed var(--bg); color: var(--text); font: 17px/1.7 "Inter", system-ui, sans-serif; overflow-x: hidden; }
+  #sea { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; display: block; }
   .wrap { max-width: 920px; margin: 0 auto; padding: 0 20px; }
   h1, h2, h3 { font-family: "Fraunces", Georgia, serif; font-weight: 600; letter-spacing: -0.01em; }
 
@@ -52,7 +50,7 @@
   h2 svg { width: 34px; height: 34px; flex-shrink: 0; }
 
   .facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 440px; }
-  .fact { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 10px; }
+  .fact { background: rgba(14, 42, 58, .82); backdrop-filter: blur(6px); border: 1px solid var(--line); border-radius: 14px; padding: 10px; }
   .fact svg { width: 100%; height: 60px; display: block; }
   .fact p { margin: 0; }
 
@@ -62,27 +60,27 @@
   .now .ic svg { width: 24px; height: 24px; }
   .now b { display: block; font-weight: 500; font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
 
-  .contact { background: var(--contact); color: #fff; border-radius: 28px; padding: 40px 32px; position: relative; overflow: hidden; margin: 20px 0 0; }
-  .contact h2 { color: #fff; margin-bottom: 20px; }
+  .contact { background: var(--contact); color: #fff; border-radius: 22px; padding: 32px 26px; position: relative; overflow: hidden; margin: 16px auto 0; width: 80%; }
+  .contact h2 { color: #fff; margin-bottom: 16px; font-size: 1.36rem; }
   .contact p { margin: 0 0 22px; opacity: .9; max-width: 420px; }
-  .contact .deco { position: absolute; right: -30px; top: -30px; width: 220px; height: 220px; opacity: .25; }
-  .msg { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 26px 24px; margin: 0 0 56px; }
-  .msg h3 { font-size: 1.2rem; margin: 0 0 14px; }
+  .contact .deco { position: absolute; right: -24px; top: -24px; width: 176px; height: 176px; opacity: .25; }
+  .msg { background: rgba(14, 42, 58, .82); backdrop-filter: blur(6px); border: 1px solid var(--line); border-radius: 18px; padding: 21px 19px; margin: 0 auto 56px; width: 80%; }
+  .msg h3 { font-size: .96rem; margin: 0 0 11px; }
   .msg textarea, .msg input[type=email] { width: 100%; background: var(--soft); color: var(--text); border: 1px solid var(--line);
-    border-radius: 12px; padding: 12px 14px; font: inherit; font-size: .95rem; }
-  .msg textarea { min-height: 96px; resize: vertical; }
-  .msg input[type=email] { margin-top: 10px; }
+    border-radius: 10px; padding: 10px 11px; font: inherit; font-size: .8rem; }
+  .msg textarea { min-height: 77px; resize: vertical; }
+  .msg input[type=email] { margin-top: 8px; }
   .msg textarea:focus, .msg input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
-  .msg .row { display: flex; align-items: center; gap: 14px; margin-top: 12px; flex-wrap: wrap; }
-  .msg button { background: var(--accent); color: #1a120e; border: 0; border-radius: 999px; padding: 10px 22px; font: 500 .95rem "Inter", sans-serif; cursor: pointer; }
+  .msg .row { display: flex; align-items: center; gap: 11px; margin-top: 10px; flex-wrap: wrap; }
+  .msg button { background: var(--accent); color: #1a120e; border: 0; border-radius: 999px; padding: 8px 18px; font: 500 .8rem "Inter", sans-serif; cursor: pointer; }
   .msg button:disabled { opacity: .5; cursor: default; }
-  .msg .note { font-size: .85rem; color: var(--muted); }
+  .msg .note { font-size: .72rem; color: var(--muted); }
   .msg .hp { position: absolute; left: -9999px; }
-  .links { display: flex; flex-wrap: wrap; gap: 10px; position: relative; }
+  .links { display: flex; flex-wrap: wrap; gap: 8px; position: relative; }
   .links a { display: inline-flex; align-items: center; gap: 8px; color: #1f1d1a; background: #fff; text-decoration: none;
-    border-radius: 999px; padding: 9px 18px; font-weight: 500; transition: transform .15s; }
+    border-radius: 999px; padding: 7px 14px; font-size: .82rem; font-weight: 500; transition: transform .15s; }
   .links a:hover, .links a:focus-visible { transform: translateY(-2px); }
-  .links svg { width: 18px; height: 18px; }
+  .links svg { width: 15px; height: 15px; }
 
   footer { color: var(--muted); font-size: .85rem; padding: 32px 0 48px; }
 
@@ -95,10 +93,12 @@
     .fact { padding: 10px; border-radius: 14px; }
     .fact svg { height: 64px; }
     .frame .sticker { left: -6px; }
+    .contact, .msg { width: 100%; }
   }
 </style>
 </head>
 <body>
+<canvas id="sea" aria-hidden="true"></canvas>
 <div class="wrap">
 
   <header class="hero">
@@ -222,6 +222,56 @@
         btn.disabled = false; note.textContent = 'Gönderilemedi, birazdan tekrar dene.';
       });
     });
+  })();
+</script>
+<script>
+  (function () {
+    var c = document.getElementById('sea');
+    var gl = c.getContext('webgl', { antialias: false, alpha: false, powerPreference: 'low-power' });
+    if (!gl) { c.style.display = 'none'; return; }
+    var vs = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+    var fs = [
+      'precision mediump float;uniform vec2 r;uniform float t;',
+      'float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}',
+      'float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);',
+      'return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}',
+      'float fb(vec2 p){float v=0.,a=.5;mat2 m=mat2(1.6,1.2,-1.2,1.6);for(int i=0;i<5;i++){v+=a*n(p);p=m*p;a*=.5;}return v;}',
+      'void main(){',
+      ' vec2 uv=gl_FragCoord.xy/r.y; vec2 q=uv*2.6+vec2(t*.035,t*.012);',
+      ' vec2 w=vec2(fb(q+vec2(0.,t*.04)),fb(q+vec2(5.2,1.3)-t*.03));',
+      ' float f=fb(q+2.2*w+vec2(t*.06,0.));',
+      ' float sw=sin(uv.x*5.+uv.y*1.6-t*.7+f*4.)*.5+.5;',
+      ' float crest=smoothstep(.82,1.,sw)*smoothstep(.35,.75,f);',
+      ' float ca=pow(1.-abs(sin(f*14.+t*.3)),10.);',
+      ' vec3 deep=vec3(.015,.075,.12), mid=vec3(.035,.19,.27);',
+      ' vec3 col=mix(deep,mid,smoothstep(.2,.85,f));',
+      ' col+=vec3(.25,.55,.62)*ca*.18;',
+      ' col+=vec3(.75,.9,.95)*crest*.16;',
+      ' vec2 v=gl_FragCoord.xy/r; col*=.75+.35*v.y;',
+      ' gl_FragColor=vec4(col,1.);}'
+    ].join('\n');
+    function sh(type, src) { var o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return o; }
+    var pr = gl.createProgram();
+    gl.attachShader(pr, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, fs));
+    gl.linkProgram(pr);
+    if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) { c.style.display = 'none'; return; }
+    gl.useProgram(pr);
+    var b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+    var loc = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    var ur = gl.getUniformLocation(pr, 'r'), ut = gl.getUniformLocation(pr, 't');
+    var SCALE = 0.5;
+    function size() {
+      c.width = Math.max(1, Math.round(innerWidth * SCALE)); c.height = Math.max(1, Math.round(innerHeight * SCALE));
+      gl.viewport(0, 0, c.width, c.height); gl.uniform2f(ur, c.width, c.height);
+    }
+    size(); addEventListener('resize', size);
+    var still = matchMedia('(prefers-reduced-motion: reduce)').matches, t0 = performance.now(), last = 0;
+    function frame(now) {
+      if (now - last > 33) { last = now; gl.uniform1f(ut, 20 + (now - t0) / 1000); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); }
+      if (!still) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
   })();
 </script>
 </body>
